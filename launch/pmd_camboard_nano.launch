@@ -10,6 +10,7 @@
   <!-- Serial number of the device to open. If this argument is an empty string,
        the first available device will be opened. -->
   <arg name="device_serial" default=""/>
+  <arg name="calibration_file" default=""/>
 
   <arg name="manager" value="$(arg camera)_nodelet_manager"/>
 

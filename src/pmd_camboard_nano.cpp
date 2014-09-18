@@ -34,20 +34,24 @@
 namespace pmd_camboard_nano
 {
 
-PMDCamboardNano::PMDCamboardNano(const std::string& device_serial)
+PMDCamboardNano::PMDCamboardNano(const std::string& device_serial, const std::string &plugin_dir, const std::string &source_plugin, const std::string &process_plugin)
 : handle_(0)
 , num_rows_(0)
 , num_columns_(0)
 , remove_invalid_pixels_(true)
 , flip_vertical_(true)
 {
-  throwExceptionIfFailed(pmdOpen(&handle_, PMD_PLUGIN_DIR "camboardnano", device_serial.c_str(), PMD_PLUGIN_DIR "camboardnanoproc", ""));
-  if (device_serial != "" && device_serial != getSerialNumber())
-  {
-    pmdClose(handle_);
-    throw PMDCameraNotOpenedException("Opened a wrong camera (serial number does not match the requested).");
-  }
-  getDirectionVectors();
+    std::string plugin = plugin_dir + source_plugin;
+    std::string process = plugin_dir + process_plugin;
+
+    throwExceptionIfFailed(pmdOpen(&handle_, plugin.c_str(), device_serial.c_str(), process.c_str(), ""));
+
+    if (device_serial != "" && device_serial != getSerialNumber())
+    {
+        pmdClose(handle_);
+        throw PMDCameraNotOpenedException("Opened a wrong camera (serial number does not match the requested).");
+    }
+    getDirectionVectors();
 }
 
 PMDCamboardNano::~PMDCamboardNano()
@@ -106,7 +110,10 @@ sensor_msgs::CameraInfoPtr PMDCamboardNano::getCameraInfo()
   num_columns_ = desc.img.numColumns;
   num_pixels_ = num_rows_ * num_columns_;
   char lens[128];
-  throwExceptionIfFailed(pmdSourceCommand(handle_, lens, 128, "GetLensParameters"));
+  if(isCalibrationDataLoaded())
+  {
+    throwExceptionIfFailed(pmdSourceCommand(handle_, lens, 128, "GetLensParameters"));
+  }
   sensor_msgs::CameraInfoPtr info = boost::make_shared<sensor_msgs::CameraInfo>();
   info->header.stamp = last_update_time_;
   info->width = num_columns_;

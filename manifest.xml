@@ -13,6 +13,7 @@
   <depend package="nodelet"/>
   <depend package="dynamic_reconfigure"/>
   <depend package="tf"/>
+  <depend package="diagnostic_updater"/>
 
   <export>
     <nodelet plugin="${prefix}/pmd_camboard_nano_nodelets.xml" />

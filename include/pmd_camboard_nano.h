@@ -37,10 +37,6 @@
 
 #include <pmdsdk2.h>
 
-#ifndef PMD_PLUGIN_DIR
-  #error PMD_PLUGIN_DIR should be defined
-#endif
-
 namespace pmd_camboard_nano
 {
 
@@ -60,7 +56,7 @@ public:
     * requested camera is not available.
     *
     * An exception will be thrown if it is not possible to open the camera. */
-  PMDCamboardNano(const std::string& device_serial = "");
+    PMDCamboardNano(const std::string& device_serial = "", const std::string &plugin_dir="/usr/local/pmd/plugins", const std::string &source_plugin="camboardnano", const std::string &process_plugin="camboardnanoproc");
 
   virtual ~PMDCamboardNano();
 
